@@ -1,0 +1,56 @@
+import java.util.*;
+public class TravelRouteFinder {
+    private Map<String, List<String>> graph;
+     public TravelRouteFinder() {
+        graph = new HashMap<>();
+    }
+    public void addTicket(String ticket) {
+        String[] cities = ticket.split("-");
+        String departure = cities[0];
+        String destination = cities[1];
+        if (!graph.containsKey(departure)) {
+            graph.put(departure, new ArrayList<>());
+        }
+        graph.get(departure).add(destination);
+    }
+    public List<String> findRoute(String startingCity) {
+        List<String> route = new ArrayList<>();
+        Stack<String> stack = new Stack<>();
+        Set<String> visited = new HashSet<>();
+        stack.push(startingCity);
+        while (!stack.isEmpty()) {
+            String currentCity = stack.pop();
+            route.add(currentCity);
+            if (graph.containsKey(currentCity)) {
+                List<String> destinations = graph.get(currentCity);
+                Collections.sort(destinations);
+                for (String destination : destinations) {
+                    if (!visited.contains(destination)) {
+                        stack.push(destination);
+                        visited.add(destination);
+                    }
+                }
+            }
+        }
+        return route;
+    }
+    public static void main(String[] args) {
+        TravelRouteFinder routeFinder = new TravelRouteFinder();
+        // Add the available tickets
+        routeFinder.addTicket("Paris-Skopje");
+        routeFinder.addTicket("Zurich-Amsterdam");
+        routeFinder.addTicket("Prague-Zurich");
+        routeFinder.addTicket("Barcelona-Berlin");
+        routeFinder.addTicket("Kiev-Prague");
+        routeFinder.addTicket("Skopje-Paris");
+        routeFinder.addTicket("Amsterdam-Barcelona");
+        routeFinder.addTicket("Berlin-Kiev");
+        routeFinder.addTicket("Berlin-Amsterdam");
+        // Find the route starting from Kiev
+        List<String> route = routeFinder.findRoute("Kiev");
+        // Print the route
+        for (String city : route) {
+            System.out.print(city + " -> ");
+        }
+    }
+}
